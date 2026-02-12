@@ -1,0 +1,10 @@
+Checks: >
+  clang-analyzer-*,
+  bugprone-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  misc-*,
+  -modernize-use-trailing-return-type,
+  -misc-no-recursion,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -misc-include-cleaner,
