@@ -16,7 +16,7 @@ enum class EOperation : uint8_t {
     factorial,
 };
 
-EOperation ConvertStrToOperation( const char *str ) {
+EOperation ConvertStrToOperation( const char* str ) {
     if ( strcmp( str, "add" ) == 0 )
         return EOperation::add;
     if ( strcmp( str, "sub" ) == 0 )
@@ -37,11 +37,18 @@ void PrintHelp() {
     std::cout << "Options:\n"
                  "  -h, --help                  Show help\n"
                  "  -o, --operation=<string>    add | sub | mul | div | pow | factorial\n"
-                 "  -a, --numberA=<int>         First number\n"
-                 "  -b, --numberB=<int>         Second number (not needed for factorial)\n";
+                 "  -a, --numberA=<int>         Firstrd.numBer\n"
+                 "  -b, --numberB=<int>         Secondrd.numBer (not needed for factorial)\n";
 }
 
-int main( int argc, char *argv[] ) {
+struct RuntimeData {
+    int32_t numA = 0;
+    int32_t numB = 0;
+    EOperation selectedOperation = EOperation::none;
+    int32_t result = 0;
+};
+
+bool Parse( int argc, char* argv[], RuntimeData& rd ) {
     static struct option long_options[] = {
         { "help", no_argument, nullptr, 'h' },
         { "operation", required_argument, nullptr, 'o' },
@@ -50,10 +57,6 @@ int main( int argc, char *argv[] ) {
         { nullptr, 0, nullptr, 0 } };
 
     int option_index = 0;
-
-    int32_t numA = 0;
-    int32_t numB = 0;
-    EOperation selectedOperation = EOperation::none;
     while ( true ) {
         auto optRes = getopt_long( argc, argv, "ho:a:b:", long_options, &option_index );
         if ( optRes == -1 ) {
@@ -63,57 +66,102 @@ int main( int argc, char *argv[] ) {
         switch ( optRes ) {
             case 'h':
                 PrintHelp();
-                return 0;
+                return false;
             case 'o':
-                selectedOperation = ConvertStrToOperation( optarg );
-                if ( selectedOperation == EOperation::none ) {
-                    std::cout << "Not valid operation!" << '\n';
-                    return 1;
-                }
+                rd.selectedOperation = ConvertStrToOperation( optarg );
                 break;
             case 'a': {
-                numA = atoi( optarg );
+                rd.numA = atoi( optarg );
             } break;
             case 'b': {
-                numB = atoi( optarg );
+                rd.numB = atoi( optarg );
             } break;
             default:
                 break;
         }
     }
 
-    int32_t result = 0;
+    return true;
+}
 
-    switch ( selectedOperation ) {
+bool CheckNumbersAndOperation( const RuntimeData& rd ) {
+    if ( rd.selectedOperation == EOperation::none ) {
+        std::cout << "Not valid operation!" << '\n';
+        return false;
+    }
+
+    if ( rd.selectedOperation == EOperation::factorial ) {
+        if ( rd.numA <= 0 ) {
+            std::cout << "numberA less or equal 0!" << '\n';
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Calculate( RuntimeData& rd ) {
+    switch ( rd.selectedOperation ) {
         case EOperation::add: {
-            result = mathlib::add( numA, numB );
+            if ( !mathlib::add( rd.numA, rd.numB, rd.result ) ) {
+                std::cout << "Invalidrd.numBer!" << '\n';
+                return false;
+            }
         } break;
         case EOperation::sub: {
-            result = mathlib::sub( numA, numB );
+            if ( !mathlib::sub( rd.numA, rd.numB, rd.result ) ) {
+                std::cout << "Invalidrd.numBer!" << '\n';
+                return false;
+            }
         } break;
         case EOperation::mul: {
-            result = mathlib::mul( numA, numB );
+            if ( !mathlib::mul( rd.numA, rd.numB, rd.result ) ) {
+                std::cout << "Invalidrd.numBer!" << '\n';
+                return false;
+            }
         } break;
         case EOperation::div: {
-            if ( !mathlib::div( numA, numB, result ) ) {
-                std::cout << "Division by zero!" << '\n';
-                return 1;
+            if ( !mathlib::div( rd.numA, rd.numB, rd.result ) ) {
+                std::cout << "Division by zero or invalidrd.numBer!" << '\n';
+                return false;
             }
         } break;
         case EOperation::pow: {
-            result = mathlib::pow( numA, numB );
+            if ( !mathlib::pow( rd.numA, rd.numB, rd.result ) ) {
+                std::cout << "Invalidrd.numBer!" << '\n';
+                return false;
+            }
         } break;
         case EOperation::factorial: {
-            if ( numA > 0 ) {
-                result = mathlib::factorial( numA );
-            } else {
-                std::cout << "numberA less or equal 0!" << '\n';
-                return 1;
+            if ( !mathlib::factorial( rd.numA, rd.result ) ) {
+                std::cout << "Invalidrd.numBer!" << '\n';
+                return false;
             }
         } break;
         default:
             break;
     }
+    return true;
+}
 
-    std::cout << "Result: " << result << '\n';
+void PrintResult( const RuntimeData& rd ) {
+    std::cout << "Result: " << rd.result << '\n';
+}
+
+void Run( int argc, char* argv[] ) {
+    RuntimeData rd;
+    if ( !Parse( argc, argv, rd ) ) {
+        return;
+    }
+    if ( !CheckNumbersAndOperation( rd ) ) {
+        return;
+    }
+    if ( !Calculate( rd ) ) {
+        return;
+    }
+    PrintResult( rd );
+}
+
+int main( int argc, char* argv[] ) {
+    Run( argc, argv );
 }
