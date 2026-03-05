@@ -16,16 +16,54 @@ FetchContent_Declare(
     GIT_TAG master
 )
 
+FetchContent_Declare(
+    json
+    GIT_REPOSITORY https://github.com/nlohmann/json
+    GIT_TAG master
+)
+
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest
+    GIT_TAG main
+)
+
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog
+    GIT_TAG v1.x
+)
+
 FetchContent_MakeAvailable(SimpleMathLib)
+FetchContent_MakeAvailable(json)
+FetchContent_MakeAvailable(googletest)
+FetchContent_MakeAvailable(spdlog)
+
+
+add_library(calculator_lib
+    src/core/Parser.cpp
+    src/core/Checker.cpp
+    src/core/Calculator.cpp
+    src/core/Printer.cpp
+    src/core/Runner.cpp
+)
+
+target_link_libraries(calculator_lib PUBLIC SimpleMathLib nlohmann_json::nlohmann_json spdlog)
 
 add_executable(calculator src/main.cpp)
+target_link_libraries(calculator PUBLIC calculator_lib)
 
-target_link_libraries(calculator PRIVATE SimpleMathLib)
+add_executable(calculator_tests tests/CalculatorTests.cpp)
+target_link_libraries(calculator_tests PUBLIC calculator_lib GTest::gtest_main)
+
+add_test(NAME calculator_tests COMMAND calculator_tests)
+
 
 file(GLOB_RECURSE ALL_SOURCE_FILES
     src/*.h
     src/*.hpp
     src/*.cpp
+    tests/*.cpp
 )
 
 add_custom_target(
