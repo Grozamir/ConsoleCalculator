@@ -6,6 +6,8 @@
 #include "Parser.hpp"
 #include "Printer.hpp"
 
+namespace calculator {
+
 class Runner {
 public:
     void Run( const std::string& inputJsonStr );
@@ -16,3 +18,5 @@ private:
     Calculator calculator{};
     Printer printer{};
 };
+
+}  // namespace calculator

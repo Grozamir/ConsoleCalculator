@@ -1,5 +1,7 @@
 #include "Checker.hpp"
 
+namespace calculator {
+
 void Checker::Validate( const RequestData& requestData ) {
     if ( requestData.operation == EOperation::none ) {
         throw std::logic_error( "Invalid operation" );
@@ -17,3 +19,5 @@ void Checker::Validate( const RequestData& requestData ) {
         }
     }
 }
+
+}  // namespace calculator

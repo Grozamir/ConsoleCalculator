@@ -1,5 +1,7 @@
 #include "Calculator.hpp"
 
+namespace calculator {
+
 int32_t Calculator::Calculate( const RequestData& requestData ) {
     switch ( requestData.operation ) {
         case EOperation::add: {
@@ -25,3 +27,5 @@ int32_t Calculator::Calculate( const RequestData& requestData ) {
     }
     throw std::logic_error( "Unknown operation" );
 }
+
+}  // namespace calculator

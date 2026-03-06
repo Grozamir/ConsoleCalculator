@@ -2,16 +2,16 @@
 #include <iostream>
 #include <string>
 
+#include "core/Logger.hpp"
 #include "core/Runner.hpp"
 
-// {"numA":5,"numB":2,"operation":"mul"}
+// calculator '{"numA":5,"numB":2,"operation":"mul"}'
 
-int main() {
-    std::cout << "Enter parameter via json: ";
-
-    std::string inputStr;
-    std::getline( std::cin, inputStr );
-
-    Runner runner{};
-    runner.Run( inputStr );
+int main( int argc, char* argv[] ) {
+    try {
+        calculator::Runner runner{};
+        runner.Run( argv[1] );
+    } catch ( const std::exception& ex ) {
+        calculator::Logger::Instance().Error( ex.what() );
+    }
 }

@@ -2,6 +2,8 @@
 
 #include <nlohmann/json.hpp>
 
+namespace calculator {
+
 enum class EOperation : uint8_t {
     none,
     add,
@@ -23,3 +25,5 @@ NLOHMANN_JSON_SERIALIZE_ENUM(
         { EOperation::pow, "mpowl" },
         { EOperation::factorial, "factorial" },
     } )
+
+}  // namespace calculator

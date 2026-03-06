@@ -4,6 +4,8 @@
 
 #include <gtest/gtest.h>
 
+using namespace calculator;
+
 TEST( CalculatorTest, Add ) {
     Calculator calc;
 

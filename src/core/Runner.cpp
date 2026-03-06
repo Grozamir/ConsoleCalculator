@@ -2,6 +2,8 @@
 
 #include "Logger.hpp"
 
+namespace calculator {
+
 void Runner::Run( const std::string& inputJsonStr ) {
     try {
         auto requestData = parser.Parse( inputJsonStr );
@@ -11,6 +13,8 @@ void Runner::Run( const std::string& inputJsonStr ) {
 
         printer.PrintResult( result );
     } catch ( const std::exception& ex ) {
-        Logger::Instance()->error( ex.what() );
+        Logger::Instance().Error( ex.what() );
     }
 }
+
+}  // namespace calculator

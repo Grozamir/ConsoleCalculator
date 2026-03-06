@@ -5,6 +5,8 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+namespace calculator {
+
 RequestData Parser::Parse( const std::string& jsonStr ) {
     auto j = json::parse( jsonStr );
 
@@ -25,3 +27,5 @@ RequestData Parser::Parse( const std::string& jsonStr ) {
 
     return reqData;
 }
+
+}  // namespace calculator
