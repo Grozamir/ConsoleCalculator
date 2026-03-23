@@ -6,6 +6,8 @@
 #include "Parser.hpp"
 #include "Printer.hpp"
 
+#include "storage/Storage.hpp"
+
 namespace calculator {
 
 class Runner {
@@ -17,6 +19,8 @@ private:
     Checker checker{};
     Calculator calculator{};
     Printer printer{};
+
+    Storage storage{};
 };
 
 }  // namespace calculator

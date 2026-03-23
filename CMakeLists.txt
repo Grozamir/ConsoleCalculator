@@ -39,6 +39,7 @@ FetchContent_MakeAvailable(json)
 FetchContent_MakeAvailable(googletest)
 FetchContent_MakeAvailable(spdlog)
 
+find_package(PostgreSQL REQUIRED)
 
 add_library(calculator_lib
     src/core/Parser.cpp
@@ -46,9 +47,18 @@ add_library(calculator_lib
     src/core/Calculator.cpp
     src/core/Printer.cpp
     src/core/Runner.cpp
+    src/storage/postgres/Connection.cpp
+    src/storage/postgres/Work.cpp
+    src/storage/Storage.cpp
+    src/storage/Data.cpp
 )
 
-target_link_libraries(calculator_lib PUBLIC SimpleMathLib nlohmann_json::nlohmann_json spdlog)
+target_include_directories(calculator_lib
+    PUBLIC
+        ${CMAKE_SOURCE_DIR}/src
+)
+
+target_link_libraries(calculator_lib PUBLIC SimpleMathLib nlohmann_json::nlohmann_json spdlog PostgreSQL::PostgreSQL)
 
 add_executable(calculator src/main.cpp)
 target_link_libraries(calculator PUBLIC calculator_lib)
