@@ -84,5 +84,12 @@ add_custom_target(
 
 add_dependencies(calculator format)
 
+add_custom_target(
+    valgrind_test
+    COMMAND valgrind --leak-check=full $<TARGET_FILE:calculator> '{"numA":5,"numB":2,"operation":"mul"}'
+    DEPENDS calculator
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
 
 install(TARGETS calculator RUNTIME DESTINATION bin)
