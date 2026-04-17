@@ -16,6 +16,10 @@ public:
         spdlogger->error( msg );
     }
 
+    void Info( std::string_view msg ) {
+        spdlogger->info( msg );
+    }
+
 private:
     std::shared_ptr<spdlog::logger> spdlogger;
 
