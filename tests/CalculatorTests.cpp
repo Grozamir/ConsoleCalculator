@@ -74,7 +74,7 @@ TEST( CalculatorTest, Factorial ) {
 TEST( CalculatorTest, Parser ) {
     Parser parser;
 
-    std::string str = R"({"numA":1,"numB":123,"operation":"mul"})";
+    const std::string str = R"({"numA":1,"numB":123,"operation":"mul"})";
     auto reqData = parser.Parse( str );
 
     EXPECT_EQ( reqData.numA, 1 );

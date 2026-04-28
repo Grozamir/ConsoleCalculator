@@ -4,11 +4,13 @@
 
 namespace calculator {
 
-void Runner::Run( const std::string& inputJsonStr ) {
-    try {
-        storage.Init();
-        storage.WarmUpCache();
+void Runner::Init() {
+    storage.Init();
+    storage.WarmUpCache();
+}
 
+Response Runner::Run( const std::string& inputJsonStr ) {
+    try {
         auto requestData = parser.Parse( inputJsonStr );
         checker.Validate( requestData );
 
@@ -30,16 +32,19 @@ void Runner::Run( const std::string& inputJsonStr ) {
                 const int32_t status = mathEx.GetErrorCode();
                 storage.AddFailCalculatorResult( operationKey, status );
                 Logger::Instance().Error( mathEx.what() );
-                return;
+                return Response::Error( mathEx.what() );
             } catch ( const std::exception& ex ) {
                 Logger::Instance().Error( ex.what() );
-                return;
+                return Response::Error( ex.what() );
             }
         }
 
         printer.PrintResult( result );
+
+        return Response::Ok( result );
     } catch ( const std::exception& ex ) {
         Logger::Instance().Error( ex.what() );
+        return Response::Error( ex.what() );
     }
 }
 
