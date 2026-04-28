@@ -8,6 +8,8 @@
 namespace calculator {
 
 void Service::Start( bool withSignals ) {
+    workerThread = std::thread( &Service::WorkerHandle, this );
+
     if ( withSignals ) {
         sigset_t set;
         sigemptyset( &set );
@@ -15,10 +17,13 @@ void Service::Start( bool withSignals ) {
 
         pthread_sigmask( SIG_BLOCK, &set, nullptr );
 
-        signalThread = std::thread( &Service::SignalHandle, this, set );
-    }
+        int sig = 0;
+        const int s = sigwait( &set, &sig );
 
-    workerThread = std::thread( &Service::WorkerHandle, this );
+        if ( s == 0 ) {
+            needStop = true;
+        }
+    }
 }
 
 void Service::Stop() {
@@ -26,21 +31,8 @@ void Service::Stop() {
 }
 
 void Service::Wait() {
-    if ( signalThread.joinable() ) {
-        signalThread.join();
-    }
-
     if ( workerThread.joinable() ) {
         workerThread.join();
-    }
-}
-
-void Service::SignalHandle( sigset_t set ) {
-    int sig = 0;
-    const int s = sigwait( &set, &sig );
-
-    if ( s == 0 ) {
-        needStop = true;
     }
 }
 

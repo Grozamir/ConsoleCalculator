@@ -68,7 +68,7 @@ target_link_libraries(calculator_lib PUBLIC SimpleMathLib nlohmann_json::nlohman
 add_executable(calculator src/main.cpp)
 target_link_libraries(calculator PUBLIC calculator_lib)
 
-#target_compile_options(calculator PRIVATE -fsanitize=thread -g -O1)
+#target_compile_options(calculator PRIVATE -fsanitize=thread -g)
 #target_link_options(calculator PRIVATE -fsanitize=thread)
 
 add_executable(calculator_tests tests/CalculatorTests.cpp
@@ -108,7 +108,7 @@ install(FILES calculator.service DESTINATION /etc/systemd/system)
 set(CPACK_GENERATOR "DEB")
 
 set(CPACK_PACKAGE_NAME "calculator")
-set(CPACK_PACKAGE_VERSION "0.2")
+set(CPACK_PACKAGE_VERSION "0.3")
 
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "grozamir")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)

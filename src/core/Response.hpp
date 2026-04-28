@@ -7,7 +7,7 @@ namespace calculator {
 struct Response {
     int32_t result = 0;
     int32_t status = 0;
-    std::string errorMsg = "";
+    std::string errorMsg;
 
     static Response Ok( int32_t newResult ) {
         return Response{ .result = newResult, .status = 0 };

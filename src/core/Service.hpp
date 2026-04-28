@@ -13,10 +13,7 @@ public:
 private:
     std::atomic<bool> needStop = false;
 
-    std::thread signalThread;
     std::thread workerThread;
-
-    void SignalHandle( sigset_t set );
 
     void WorkerHandle();
 };
