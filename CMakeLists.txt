@@ -22,6 +22,7 @@ FetchContent_Declare(
     GIT_TAG master
 )
 
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest
@@ -41,6 +42,8 @@ FetchContent_MakeAvailable(spdlog)
 
 find_package(PostgreSQL REQUIRED)
 
+find_package(cppzmq REQUIRED)
+
 add_library(calculator_lib
     src/core/Parser.cpp
     src/core/Checker.cpp
@@ -51,6 +54,8 @@ add_library(calculator_lib
     src/storage/postgres/Work.cpp
     src/storage/Storage.cpp
     src/storage/Data.cpp
+    src/core/Service.cpp
+    src/core/Response.cpp
 )
 
 target_include_directories(calculator_lib
@@ -58,12 +63,16 @@ target_include_directories(calculator_lib
         ${CMAKE_SOURCE_DIR}/src
 )
 
-target_link_libraries(calculator_lib PUBLIC SimpleMathLib nlohmann_json::nlohmann_json spdlog PostgreSQL::PostgreSQL)
+target_link_libraries(calculator_lib PUBLIC SimpleMathLib nlohmann_json::nlohmann_json spdlog PostgreSQL::PostgreSQL cppzmq)
 
 add_executable(calculator src/main.cpp)
 target_link_libraries(calculator PUBLIC calculator_lib)
 
-add_executable(calculator_tests tests/CalculatorTests.cpp)
+#target_compile_options(calculator PRIVATE -fsanitize=thread -g)
+#target_link_options(calculator PRIVATE -fsanitize=thread)
+
+add_executable(calculator_tests tests/CalculatorTests.cpp
+    tests/ServiceTests.cpp)
 target_link_libraries(calculator_tests PUBLIC calculator_lib GTest::gtest_main)
 
 add_test(NAME calculator_tests COMMAND calculator_tests)
@@ -92,4 +101,17 @@ add_custom_target(
 )
 
 
-install(TARGETS calculator RUNTIME DESTINATION bin)
+install(TARGETS calculator RUNTIME DESTINATION /usr/bin)
+
+install(FILES calculator.service DESTINATION /etc/systemd/system)
+
+set(CPACK_GENERATOR "DEB")
+
+set(CPACK_PACKAGE_NAME "calculator")
+set(CPACK_PACKAGE_VERSION "0.3")
+
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "grozamir")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libzmq5")
+
+include(CPack)

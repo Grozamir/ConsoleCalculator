@@ -1,16 +1,13 @@
 #include <cstdint>
-#include <iostream>
-#include <string>
 
 #include "core/Logger.hpp"
-#include "core/Runner.hpp"
-
-// calculator '{"numA":5,"numB":2,"operation":"mul"}'
+#include "core/Service.hpp"
 
 int main( int argc, char* argv[] ) {
     try {
-        calculator::Runner runner{};
-        runner.Run( argv[1] );
+        calculator::Service service;
+        service.Start();
+        service.Wait();
     } catch ( const std::exception& ex ) {
         calculator::Logger::Instance().Error( ex.what() );
     }
